@@ -1,8 +1,13 @@
 import cv2
 import sys
-
+from keras_vggface.vggface import VGGFace
 
 def video_capture():
+
+    model = VGGFace(model='resnet50')
+    print('Inputs: %s' % model.inputs)
+    print('Outputs: %s' % model.outputs)
+
     # Create and initialize a face cascacde. This loads the face cascade into memory
     # so it is ready for use.
     # The cascade is an XML file that contins the data to detect faces.
@@ -27,10 +32,27 @@ def video_capture():
         # w,h represents the widht and height
         # we create a rectangle with the rectangle function to frame the face
         for x,y,w,h in faces:
-            frame = cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 3);
+            frame_face = cv2.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 3);
+        try:
+            x = faces[0][0]
+            y = faces[0][1]
+            w = faces[0][2]
+            h = faces[0][3]
+            cropped = frame[y:y+h, x:x+w]
 
-        # display the image
-        cv2.imshow('Face Detector', frame);
+            width = 224
+            height = 224
+            dim = (width, height)
+
+            cropped_resized = cv2.resize(cropped, dim, interpolation = cv2.INTER_AREA)
+
+
+        except:
+            pass
+        #cropped = faces[[0]:[1],[2]:[3]]
+
+        # display the imageq
+        cv2.imshow('Face Detector', frame_face)
 
         # To continue to display the image, we need to use waitKey
         # On detecting the "q" key being pressed while OpenCv window is active,
