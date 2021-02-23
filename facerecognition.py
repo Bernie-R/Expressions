@@ -1,6 +1,10 @@
 import cv2
 import sys
+
 from keras_vggface.vggface import VGGFace
+from keras_vggface.utils import decode_predictions
+
+import numpy as np
 
 def video_capture():
 
@@ -38,17 +42,32 @@ def video_capture():
             y = faces[0][1]
             w = faces[0][2]
             h = faces[0][3]
-            cropped = frame[y:y+h, x:x+w]
-
-            width = 224
-            height = 224
-            dim = (width, height)
-
-            cropped_resized = cv2.resize(cropped, dim, interpolation = cv2.INTER_AREA)
-
-
         except:
-            pass
+            x = 1
+            y = 1
+            w = 1
+            h = 1
+        cropped = frame[y:y+h, x:x+w]
+
+
+        width = 224
+        height = 224
+        dim = (width, height)
+
+        cropped_resized = cv2.resize(cropped, dim, interpolation = cv2.INTER_AREA)
+
+        cropped_resized = np.expand_dims(cropped_resized, axis=0)
+
+        yhat = model.predict(cropped_resized)
+
+        # convert prediction into names
+        results = decode_predictions(yhat)
+        # display most likely results
+        for result in results[0]:
+        	print('%s: %.3f%%' % (result[0], result[1]*100))
+
+        #except:
+        #    pass
         #cropped = faces[[0]:[1],[2]:[3]]
 
         # display the imageq
