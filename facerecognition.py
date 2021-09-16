@@ -88,4 +88,5 @@ def video_capture():
     video.release()
     cv2.destroyAllWindows()
 
-video_capture()
+if __name__ == '__main__':
+    video_capture()
